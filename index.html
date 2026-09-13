@@ -25,7 +25,7 @@
     padding: 32px 20px 80px;
   }
 
-  .wrap{ max-width: 1280px; margin: 0 auto; }
+  .wrap{ max-width: 1500px; margin: 0 auto; }
 
   header{
     display: flex;
@@ -124,15 +124,26 @@
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 4px;
-    padding: 28px;
+    padding: 24px 16px;
+  }
+
+  .capture-title{
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 18px;
   }
 
   #capture-area{
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 26px;
     background: var(--panel);
     padding: 10px;
+  }
+
+  .silos-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
   }
 
   .silo-card{
@@ -186,13 +197,16 @@
 
   <header>
     <div>
-      <h1>Visualizador de Silos de Pienso</h1>
-      <p>Define cuántos silos hay, ajusta cada uno y exporta todo en un solo PDF</p>
+      <h1 id="farmTitle">Mi Granja</h1>
     </div>
   </header>
 
   <div class="panel">
     <div class="top-row">
+      <div class="field-inline" style="min-width:220px;">
+        <label for="farmName">Nombre de la granja</label>
+        <input type="text" id="farmName" value="Mi Granja" style="width:100%;" />
+      </div>
       <div class="field-inline">
         <label for="numSilos">Número de silos</label>
         <input type="number" id="numSilos" value="6" min="1" max="20" />
@@ -217,7 +231,10 @@
   </div>
 
   <div class="stage">
-    <div id="capture-area"></div>
+    <div id="capture-area">
+      <div class="capture-title" id="captureTitle">Mi Granja</div>
+      <div class="silos-grid" id="silosGrid"></div>
+    </div>
   </div>
 
   <footer>Generado localmente en el navegador — sin envío de datos a ningún servidor.</footer>
@@ -232,6 +249,10 @@
   const numSilosInput = $('numSilos');
   const siloRows = $('siloRows');
   const captureArea = $('capture-area');
+  const silosGrid = $('silosGrid');
+  const captureTitle = $('captureTitle');
+  const farmTitle = $('farmTitle');
+  const farmNameInput = $('farmName');
   const exportBtn = $('exportBtn');
   const printBtn = $('printBtn');
 
@@ -362,7 +383,7 @@
   }
 
   function renderGrid(){
-    captureArea.innerHTML = configs.map((cfg, i) => {
+    silosGrid.innerHTML = configs.map((cfg, i) => {
       const { svg, color, fillPct } = buildSiloSVG(cfg, i);
       const capacityT = cfg.capacity !== '' && cfg.capacity !== null ? parseFloat(cfg.capacity) : null;
       const capLine = capacityT
@@ -387,6 +408,12 @@
     renderRows();
     renderGrid();
   }
+
+  farmNameInput.addEventListener('input', () => {
+    const name = farmNameInput.value || 'Mi Granja';
+    farmTitle.textContent = name;
+    captureTitle.textContent = name;
+  });
 
   numSilosInput.addEventListener('input', () => {
     const n = Math.max(1, Math.min(30, parseInt(numSilosInput.value, 10) || 1));
