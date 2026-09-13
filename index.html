@@ -197,7 +197,7 @@
 
   <header>
     <div>
-      <h1 id="farmTitle">Mi Granja</h1>
+      <h1 id="farmTitle">Granja el Guijar</h1>
     </div>
   </header>
 
@@ -205,7 +205,7 @@
     <div class="top-row">
       <div class="field-inline" style="min-width:220px;">
         <label for="farmName">Nombre de la granja</label>
-        <input type="text" id="farmName" value="Mi Granja" style="width:100%;" />
+        <input type="text" id="farmName" value="Granja el Guijar" style="width:100%;" />
       </div>
       <div class="field-inline">
         <label for="numSilos">Número de silos</label>
@@ -232,7 +232,7 @@
 
   <div class="stage">
     <div id="capture-area">
-      <div class="capture-title" id="captureTitle">Mi Granja</div>
+      <div class="capture-title" id="captureTitle">Granja el Guijar</div>
       <div class="silos-grid" id="silosGrid"></div>
     </div>
   </div>
@@ -258,10 +258,12 @@
 
   let configs = [];
 
+  const defaultNaveNames = ['Nave 1', 'Nave 2', 'Nave 2', 'Nave 3', 'Nave 4', 'Nave 4'];
+
   function defaultConfig(idx){
     return {
       id: String(idx + 1),
-      name: 'Silo ' + (idx + 1),
+      name: defaultNaveNames[idx] || ('Silo ' + (idx + 1)),
       rings: 4,
       fill: 50,
       capacity: ''
@@ -300,8 +302,10 @@
     const fillPct = Math.min(100, Math.max(0, parseInt(cfg.fill, 10) || 0));
 
     const bodyWidth = 120;
-    const ringH = 26;
-    const bodyHeight = ringH * numRings;
+    const ringH = 22;
+    // "anillos" = nº de líneas separadoras visibles en el cuerpo del silo
+    const numBands = numRings + 1;
+    const bodyHeight = ringH * numBands;
     const coneH = 60;
     const domeH = bodyWidth * 0.18;
     const marginTop = domeH + 10;
@@ -326,20 +330,9 @@
     const domePath = `M ${x1} ${yBodyTop} A ${bodyWidth / 2} ${domeH} 0 0 1 ${x2} ${yBodyTop} L ${x2} ${yBodyTop} L ${x1} ${yBodyTop} Z`;
 
     let ringLines = '';
-    for (let i = 1; i < numRings; i++){
+    for (let i = 1; i <= numRings; i++){
       const y = yBodyTop + i * ringH;
       ringLines += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#3A3835" stroke-width="1.6" opacity="0.85"/>`;
-    }
-
-    let corrugation = '';
-    const step = 5;
-    for (let y = yBodyTop + step; y < yBodyBottom; y += step){
-      corrugation += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#A9A79F" stroke-width="0.5" opacity="0.4"/>`;
-    }
-    for (let y = yBodyBottom + step; y < tipY; y += step){
-      const ratio = (tipY - y) / coneH;
-      const hw = (bodyWidth / 2) * ratio;
-      corrugation += `<line x1="${xCenter - hw}" y1="${y}" x2="${xCenter + hw}" y2="${y}" stroke="#A9A79F" stroke-width="0.5" opacity="0.35"/>`;
     }
 
     const siloId = cfg.id || '';
@@ -359,7 +352,6 @@
         </defs>
         <path d="${bodyOutline}" fill="url(#steelGrad-${gradId})" stroke="#5A5D62" stroke-width="1.5"/>
         ${fillPath ? `<path d="${fillPath}" fill="${color}" stroke="none" opacity="0.92"/>` : ''}
-        ${corrugation}
         ${ringLines}
         <path d="${domePath}" fill="url(#domeGrad-${gradId})" stroke="#5A5D62" stroke-width="1.5"/>
         <line x1="${x1}" y1="${yBodyTop}" x2="${x1}" y2="${yBodyBottom}" stroke="#5A5D62" stroke-width="1"/>
@@ -410,7 +402,7 @@
   }
 
   farmNameInput.addEventListener('input', () => {
-    const name = farmNameInput.value || 'Mi Granja';
+    const name = farmNameInput.value || 'Granja el Guijar';
     farmTitle.textContent = name;
     captureTitle.textContent = name;
   });
