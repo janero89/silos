@@ -146,6 +146,11 @@
     gap: 16px;
   }
 
+  .silos-grid.pdf-layout{
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 40px 60px !important;
+  }
+
   .silo-card{
     display: flex;
     flex-direction: column;
@@ -435,7 +440,9 @@
     exportBtn.textContent = 'Generando PDF…';
     exportBtn.disabled = true;
     try {
+      silosGrid.classList.add('pdf-layout');
       const canvas = await html2canvas(captureArea, { backgroundColor: '#FFFFFF', scale: 2 });
+      silosGrid.classList.remove('pdf-layout');
       const { jsPDF } = window.jspdf;
       const orientation = canvas.width > canvas.height ? 'landscape' : 'portrait';
       const pdf = new jsPDF({ orientation, unit: 'pt', format: 'a4' });
@@ -470,6 +477,7 @@
       console.error(err);
       alert('No se pudo generar el PDF. Revisa la conexión (se necesitan las librerías de cdnjs.cloudflare.com).');
     } finally {
+      silosGrid.classList.remove('pdf-layout');
       exportBtn.textContent = original;
       exportBtn.disabled = false;
     }
