@@ -70,6 +70,30 @@
     margin-bottom: 18px;
   }
 
+  .preset-row{
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .preset-label{
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .preset-option{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .preset-option input{ accent-color: var(--accent); cursor: pointer; }
+
   .field-inline label{
     display: block; font-size: 13px; margin-bottom: 6px; color: var(--ink);
   }
@@ -220,6 +244,22 @@
   </header>
 
   <div class="panel">
+    <div class="preset-row">
+      <span class="preset-label">Granja:</span>
+      <label class="preset-option">
+        <input type="radio" name="farmPreset" value="guijar" checked />
+        Granja el Guijar
+      </label>
+      <label class="preset-option">
+        <input type="radio" name="farmPreset" value="perrorubio" />
+        Granja Perrorubio
+      </label>
+      <label class="preset-option">
+        <input type="radio" name="farmPreset" value="manual" />
+        Manual
+      </label>
+    </div>
+
     <div class="top-row">
       <div class="field-inline" style="min-width:220px;">
         <label for="farmName">Nombre de la granja</label>
@@ -271,6 +311,7 @@
   const captureTitle = $('captureTitle');
   const farmTitle = $('farmTitle');
   const farmNameInput = $('farmName');
+  const presetRadios = document.querySelectorAll('input[name="farmPreset"]');
   const exportBtn = $('exportBtn');
   const printBtn = $('printBtn');
 
@@ -278,6 +319,30 @@
 
   const defaultNaveNames = ['Nave 1', 'Nave 2', 'Nave 2', 'Nave 3', 'Nave 4', 'Nave 4'];
   const defaultRings = [4, 4, 3, 3, 3, 3];
+
+  const farmPresets = {
+    guijar: {
+      farmName: 'Granja el Guijar',
+      silos: [
+        { name: 'Nave 1', rings: 4 },
+        { name: 'Nave 2', rings: 4 },
+        { name: 'Nave 2', rings: 3 },
+        { name: 'Nave 3', rings: 3 },
+        { name: 'Nave 4', rings: 3 },
+        { name: 'Nave 4', rings: 3 }
+      ]
+    },
+    perrorubio: {
+      farmName: 'Granja Perrorubio',
+      silos: [
+        { name: 'Nave 1', rings: 4 },
+        { name: 'Nave 2', rings: 4 },
+        { name: 'Nave 3', rings: 4 },
+        { name: 'Nave 4', rings: 4 },
+        { name: 'Nave 5', rings: 4 }
+      ]
+    }
+  };
 
   function defaultConfig(idx){
     return {
@@ -444,6 +509,29 @@
     const name = farmNameInput.value || 'Granja el Guijar';
     farmTitle.textContent = name;
     captureTitle.textContent = name;
+  });
+
+  function loadPreset(key){
+    const preset = farmPresets[key];
+    if (!preset) return; // 'manual' → no tocar nada, se sigue editando a mano
+    farmNameInput.value = preset.farmName;
+    farmTitle.textContent = preset.farmName;
+    captureTitle.textContent = preset.farmName;
+    numSilosInput.value = preset.silos.length;
+    configs = preset.silos.map((s, i) => ({
+      id: String(i + 1),
+      name: s.name,
+      rings: s.rings,
+      fill: 50,
+      capacity: ''
+    }));
+    renderAll();
+  }
+
+  presetRadios.forEach((radio) => {
+    radio.addEventListener('change', () => {
+      if (radio.checked) loadPreset(radio.value);
+    });
   });
 
   numSilosInput.addEventListener('input', () => {
