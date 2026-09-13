@@ -259,12 +259,13 @@
   let configs = [];
 
   const defaultNaveNames = ['Nave 1', 'Nave 2', 'Nave 2', 'Nave 3', 'Nave 4', 'Nave 4'];
+  const defaultRings = [4, 4, 3, 3, 3, 3];
 
   function defaultConfig(idx){
     return {
       id: String(idx + 1),
       name: defaultNaveNames[idx] || ('Silo ' + (idx + 1)),
-      rings: 4,
+      rings: defaultRings[idx] || 4,
       fill: 50,
       capacity: ''
     };
