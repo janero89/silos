@@ -143,6 +143,7 @@
   table.silo-table td.col-rings input,
   table.silo-table td.col-fill input,
   table.silo-table td.col-cap input{ width: 76px; }
+  table.silo-table td.col-feed input{ width: 130px; }
 
   .stage{
     background: var(--panel);
@@ -193,6 +194,19 @@
   .silo-card .silo-sub{
     font-family: "Helvetica Neue", Arial, sans-serif;
     font-size: 10px; color: var(--muted); margin-bottom: 8px;
+  }
+
+  .silo-card .feed-type{
+    display: inline-block;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    background: #EAF1EE;
+    border: 1px solid #CFE0D8;
+    border-radius: 10px;
+    padding: 2px 9px;
+    margin-bottom: 8px;
   }
 
   .silo-card .svg-box{
@@ -282,6 +296,7 @@
           <th>Anillos</th>
           <th>% Lleno</th>
           <th>Capacidad (t) — opcional</th>
+          <th>Tipo de alimento — opcional</th>
         </tr>
       </thead>
       <tbody id="siloRows"></tbody>
@@ -350,7 +365,8 @@
       name: defaultNaveNames[idx] || ('Silo ' + (idx + 1)),
       rings: defaultRings[idx] || 4,
       fill: 50,
-      capacity: ''
+      capacity: '',
+      feedType: ''
     };
   }
 
@@ -474,6 +490,7 @@
         <td class="col-rings"><input class="cell-rings" type="number" min="1" max="10" value="${cfg.rings}" /></td>
         <td class="col-fill"><input class="cell-fill" type="number" min="0" max="100" value="${cfg.fill}" /></td>
         <td class="col-cap"><input class="cell-cap" type="number" min="0" step="0.5" placeholder="—" value="${cfg.capacity}" /></td>
+        <td class="col-feed"><input class="cell-feed" type="text" placeholder="Ej: Iniciación" value="${cfg.feedType || ''}" /></td>
       </tr>
     `).join('');
   }
@@ -489,6 +506,7 @@
         <div class="silo-card">
           <div class="silo-name">${cfg.name || ('Silo ' + cfg.id)}</div>
           <div class="silo-sub">${cfg.rings} anillo${cfg.rings > 1 ? 's' : ''}${capacityT ? ' · ' + capacityT.toFixed(1) + ' t' : ''}</div>
+          ${cfg.feedType ? `<div class="feed-type">${cfg.feedType}</div>` : ''}
           <div class="svg-box">${svg}</div>
           <div class="fill-readout">
             <div class="fill-number">${fillPct}%</div>
@@ -523,7 +541,8 @@
       name: s.name,
       rings: s.rings,
       fill: 50,
-      capacity: ''
+      capacity: '',
+      feedType: s.feedType || ''
     }));
     renderAll();
   }
@@ -551,6 +570,7 @@
     else if (e.target.classList.contains('cell-rings')) cfg.rings = parseInt(e.target.value, 10) || 1;
     else if (e.target.classList.contains('cell-fill')) cfg.fill = parseInt(e.target.value, 10) || 0;
     else if (e.target.classList.contains('cell-cap')) cfg.capacity = e.target.value;
+    else if (e.target.classList.contains('cell-feed')) cfg.feedType = e.target.value;
     renderGrid();
   });
 
